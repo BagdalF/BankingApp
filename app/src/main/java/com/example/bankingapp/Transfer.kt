@@ -1,3 +1,5 @@
+@file:Suppress("PreviewAnnotationInFunctionWithParameters")
+
 package com.example.bankingapp
 
 import android.os.Bundle
@@ -5,12 +7,13 @@ import com.example.bankingapp.components.*
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,9 +40,10 @@ fun TransferScreen() {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        var iban by remember { mutableStateOf("BE000000000000") }
+        var accolade by remember { mutableStateOf("CF0000-AC") }
         var name by remember { mutableStateOf("") }
-        var amount by remember { mutableStateOf("€0.00") }
+        var amount by remember { mutableStateOf("0.00") }
+        var currency by remember { mutableStateOf("R$") }
 
         Column(
             modifier = Modifier
@@ -48,9 +52,9 @@ fun TransferScreen() {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             OutlinedTextField(
-                value = iban,
-                onValueChange = { iban = it },
-                label = { Text("IBAN / Account number") },
+                value = accolade,
+                onValueChange = { accolade = it },
+                label = { Text("ACCD / Account number") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -70,6 +74,9 @@ fun TransferScreen() {
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
+            Spacer(modifier = Modifier.height(4.dp))
+
+            CurrencyDropdownMenu(selectedCurrency = currency, onCurrencySelected = { currency= it })
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -85,7 +92,6 @@ fun TransferScreen() {
                 Text("Send", color = Color.White, fontSize = 16.sp)
             }
         }
-
         Spacer(modifier = Modifier.weight(1f))
 
         NavBar()
@@ -96,4 +102,49 @@ fun TransferScreen() {
 @Composable
 fun TransferPreview() {
     TransferScreen()
+
+}
+@Composable
+fun CurrencyDropdownMenu(
+    selectedCurrency: String,
+    onCurrencySelected: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    Box {
+        Button(onClick = { expanded = !expanded },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            colors = ButtonDefaults.buttonColors
+                (containerColor = Color(0xFF1976D2)
+            )
+        ) { Text("$selectedCurrency ▼", fontSize = 20.sp)}
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text("BRL") },
+                onClick = {
+                    onCurrencySelected("BRL")
+                    expanded = false
+                }
+            )
+            DropdownMenuItem(
+                text = { Text("USD") },
+                onClick = {
+                    onCurrencySelected("USD")
+                    expanded = false
+                }
+            )
+            DropdownMenuItem(
+                text = { Text("EUR") },
+                onClick = {
+                    onCurrencySelected("EUR")
+                    expanded = false
+                }
+            )
+        }
+    }
 }
