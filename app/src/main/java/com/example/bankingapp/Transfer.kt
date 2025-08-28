@@ -3,17 +3,14 @@
 package com.example.bankingapp
 
 import android.os.Bundle
-import com.example.bankingapp.components.*
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,7 +33,6 @@ fun TransferScreen() {
             .fillMaxSize()
             .background(Color.White)
     ) {
-        Header(title = "Transfer", onIconClick = {})
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -94,7 +90,6 @@ fun TransferScreen() {
         }
         Spacer(modifier = Modifier.weight(1f))
 
-        NavBar()
     }
 }
 
