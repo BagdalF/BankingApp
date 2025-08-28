@@ -14,12 +14,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.bankingapp.ui.theme.BankingAppTheme
 
 class TransferActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme {
+            BankingAppTheme {
                 TransferScreen()
             }
         }
@@ -33,9 +34,9 @@ fun TransferScreen() {
             .fillMaxSize()
             .background(Color.White)
     ) {
-        Header(title = "Transfer", onIconClick = {})
+        // Header(title = "Transfer", onIconClick = {})
 
-        Spacer(modifier = Modifier.height(24.dp))
+        // Spacer(modifier = Modifier.height(24.dp))
 
         var iban by remember { mutableStateOf("BE000000000000") }
         var name by remember { mutableStateOf("") }
@@ -86,9 +87,9 @@ fun TransferScreen() {
             }
         }
 
-        Spacer(modifier = Modifier.weight(1f))
+        // Spacer(modifier = Modifier.weight(1f))
 
-        NavBar()
+        // NavBar()
     }
 }
 

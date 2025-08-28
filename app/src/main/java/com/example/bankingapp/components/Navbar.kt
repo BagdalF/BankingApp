@@ -12,10 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
-@Preview
 @Composable
-fun NavBar() {
-    var selectedItem by remember { mutableStateOf(0) }
+fun NavBar(selectedItem: Int, onItemSelected: (Int) -> Unit) {
 
     NavigationBar(
         containerColor = Color.White,
@@ -26,7 +24,7 @@ fun NavBar() {
             icon = { Icon(Icons.Filled.Person, contentDescription = "Profile") },
             label = { Text("Profile") },
             selected = selectedItem == 0,
-            onClick = { selectedItem = 0 },
+            onClick = { onItemSelected(0) },
             alwaysShowLabel = true,
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = Color.White,
@@ -40,7 +38,7 @@ fun NavBar() {
             icon = { Icon(Icons.Filled.Settings, contentDescription = "Statement") },
             label = { Text("Statement") },
             selected = selectedItem == 1,
-            onClick = { selectedItem = 1 },
+            onClick = { onItemSelected(1) },
             alwaysShowLabel = true,
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = Color.White,
@@ -54,7 +52,7 @@ fun NavBar() {
             icon = { Icon(Icons.Filled.Info, contentDescription = "Transfers") },
             label = { Text("Transfers") },
             selected = selectedItem == 2,
-            onClick = { selectedItem = 2 },
+            onClick = { onItemSelected(2) },
             alwaysShowLabel = true,
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = Color.White,

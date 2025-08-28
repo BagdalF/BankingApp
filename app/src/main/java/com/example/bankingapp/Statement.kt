@@ -20,12 +20,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.bankingapp.ui.theme.BankingAppTheme
 
 class StatementActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme {
+            BankingAppTheme {
                 StatementScreen()
             }
         }
@@ -41,12 +42,12 @@ data class Transaction(
 @Composable
 fun StatementScreen() {
     val transactions = listOf(
-        Transaction("24 OCT", "Anerkeyo Maestro", "- €29.61"),
-        Transaction("16 OCT", "Paypal", "- €204.27"),
-        Transaction("18 OCT", "Starting Maestro", "- €19.81"),
-        Transaction("18 OCT", "GutEare", "- €259.87"),
-        Transaction("14 OCT", "Benkcontact", "- €29.61"),
-        Transaction("16 OCT", "Masto card", "- €147.27")
+        Transaction("24 OCT", "Anerkeyo Maestro", "- R$ 29,61"),
+        Transaction("18 OCT", "Starting Maestro", "- R$ 19,81"),
+        Transaction("18 OCT", "GutEare", "- R$ 259,87"),
+        Transaction("16 OCT", "Paypal", "- R$ 204,27"),
+        Transaction("16 OCT", "Masto card", "- R$ 147,27"),
+        Transaction("14 OCT", "Benkcontact", "- R$ 29,61")
     )
 
     Column(
@@ -54,17 +55,17 @@ fun StatementScreen() {
             .fillMaxSize()
             .background(Color(0xFFF5F5F5))
     ) {
-        Header(title = "Bank Statement", onIconClick = {}, actions = {
-            IconButton(onClick = { /* ação da lupa */ }) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search",
-                    tint = Color.White
-                )
-            }
-        })
+        //Header(title = "Bank Statement", onIconClick = {}, actions = {
+        //    IconButton(onClick = { /* ação da lupa */ }) {
+        //        Icon(
+        //            imageVector = Icons.Default.Search,
+        //            contentDescription = "Search",
+        //            tint = Color.White
+        //        )
+        //    }
+        //})
 
-        Spacer(modifier = Modifier.height(8.dp))
+        // Spacer(modifier = Modifier.height(8.dp))
 
         // Card com saldo e usuário
         Card(
@@ -85,7 +86,7 @@ fun StatementScreen() {
                     Text("John Williams", fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     Text("Professional", fontSize = 14.sp, color = Color.Gray)
                 }
-                Text("€293.42", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = Color(0xFF1976D2))
+                Text("R$ 293,42", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = Color(0xFF1976D2))
             }
         }
 
@@ -112,9 +113,9 @@ fun StatementScreen() {
             }
         }
 
-        Spacer(modifier = Modifier.weight(1f))
+        // Spacer(modifier = Modifier.weight(1f))
 
-        NavBar()
+        // NavBar()
     }
 }
 

@@ -19,12 +19,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.bankingapp.ui.theme.BankingAppTheme
 
 class EditProfileActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme {
+            BankingAppTheme {
                 EditProfileScreen()
             }
         }
@@ -38,9 +39,9 @@ fun EditProfileScreen() {
             .fillMaxSize()
             .background(Color.White)
     ) {
-        Header(title = "Profile", onIconClick = {})
+        //Header(title = "Profile", onIconClick = {})
 
-        Spacer(modifier = Modifier.height(24.dp))
+        //Spacer(modifier = Modifier.height(24.dp))
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -113,9 +114,9 @@ fun EditProfileScreen() {
             }
         }
 
-        Spacer(modifier = Modifier.weight(1f))
+        // Spacer(modifier = Modifier.weight(1f))
 
-        NavBar()
+        // NavBar()
     }
 }
 
