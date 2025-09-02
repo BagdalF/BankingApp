@@ -4,6 +4,8 @@ import android.os.Bundle
 import com.example.bankingapp.components.*
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import android.content.Context
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -21,6 +23,34 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.bankingapp.ui.theme.BankingAppTheme
 
+fun saveProfile(context: Context, firstName: String, lastName: String, phone: String, email: String) {
+    val prefs = context.getSharedPreferences("profile_prefs", Context.MODE_PRIVATE)
+    prefs.edit().apply {
+        putString("firstName", firstName)
+        putString("lastName", lastName)
+        putString("phone", phone)
+        putString("email", email)
+        apply()
+    }
+}
+
+fun loadProfile(context: Context): ProfileData {
+    val prefs = context.getSharedPreferences("profile_prefs", Context.MODE_PRIVATE)
+    return ProfileData(
+        prefs.getString("firstName", "John") ?: "John",
+        prefs.getString("lastName", "Williams") ?: "Williams",
+        prefs.getString("phone", "+32 1231-456-789") ?: "+32 1231-456-789",
+        prefs.getString("email", "JohnWilliams@mail.com") ?: "JohnWilliams@mail.com"
+    )
+}
+
+data class ProfileData(
+    val firstName: String,
+    val lastName: String,
+    val phone: String,
+    val email: String
+)
+
 class EditProfileActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +64,16 @@ class EditProfileActivity : ComponentActivity() {
 
 @Composable
 fun EditProfileScreen() {
+    val context = LocalContext.current
+    val profile = remember { loadProfile(context) }
+
+    var firstName by remember { mutableStateOf(profile.firstName) }
+    var lastName by remember { mutableStateOf(profile.lastName) }
+    var phone by remember { mutableStateOf(profile.phone) }
+    var email by remember { mutableStateOf(profile.email) }
+
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -54,16 +94,10 @@ fun EditProfileScreen() {
                 modifier = Modifier.size(100.dp)
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text("John Williams", fontSize = 20.sp)
+            Text("${profile.firstName} ${profile.lastName}", fontSize = 20.sp)
         }
 
         Spacer(modifier = Modifier.height(24.dp))
-
-        // Campos do formulário
-        var firstName by remember { mutableStateOf("John") }
-        var lastName by remember { mutableStateOf("Williams") }
-        var phone by remember { mutableStateOf("+32 1231-456-789") }
-        var email by remember { mutableStateOf("JohnWilliams@mail.com") }
 
         Column(
             modifier = Modifier
@@ -102,7 +136,7 @@ fun EditProfileScreen() {
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
-                onClick = { /* ação salvar */ },
+                onClick = { saveProfile(context, firstName, lastName, phone, email) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),

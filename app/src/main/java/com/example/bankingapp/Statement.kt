@@ -4,6 +4,8 @@ import android.os.Bundle
 import com.example.bankingapp.components.*
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import android.content.Context
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,6 +15,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,6 +44,9 @@ data class Transaction(
 
 @Composable
 fun StatementScreen() {
+    val context = LocalContext.current
+    val profile = remember { loadProfile(context) }
+
     val transactions = listOf(
         Transaction("24 OCT", "Anerkeyo Maestro", "- R$ 29,61"),
         Transaction("18 OCT", "Starting Maestro", "- R$ 19,81"),
@@ -83,8 +89,8 @@ fun StatementScreen() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
-                    Text("John Williams", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    Text("Professional", fontSize = 14.sp, color = Color.Gray)
+                    Text("${profile.firstName} ${profile.lastName}", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text(profile.email, fontSize = 14.sp, color = Color.Gray)
                 }
                 Text("R$ 293,42", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = Color(0xFF1976D2))
             }
