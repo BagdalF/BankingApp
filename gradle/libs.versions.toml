@@ -17,6 +17,9 @@ navigationCompose = "2.9.3"
 navigationFragmentKtx = "2.6.0"
 navigationUiKtx = "2.6.0"
 lifecycleRuntimeKtx = "2.9.1"
+roomCompiler = "2.8.0"
+roomKtx = "2.8.0"
+roomRuntime = "2.8.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -25,6 +28,9 @@ androidx-material = { module = "androidx.compose.material:material", version.ref
 androidx-material3 = { module = "androidx.composevh.material3:material3" }
 androidx-foundation = { module = "androidx.compose.foundation:foundation" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 androidx-ui = { module = "androidx.compose.ui:ui" }
 androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }

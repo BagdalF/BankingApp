@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,10 +28,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.bankingapp.controllers.ProfileData
+import com.example.bankingapp.data.Usuarios
 
 @Composable
-fun EditProfileScreen(profile: ProfileData, onSaveChanges: (firstName: String, lastName: String, phone: String, email: String) -> Unit) {
+fun EditProfileScreen(profile: Usuarios, onDelete: () -> Unit, onSaveChanges: (firstName: String, lastName: String, phone: String, email: String) -> Unit) {
 
     var firstName by remember { mutableStateOf(profile.firstName) }
     var lastName by remember { mutableStateOf(profile.lastName) }
@@ -41,10 +43,6 @@ fun EditProfileScreen(profile: ProfileData, onSaveChanges: (firstName: String, l
             .fillMaxSize()
             .background(Color.White)
     ) {
-        //Header(title = "Profile", onIconClick = {})
-
-        //Spacer(modifier = Modifier.height(24.dp))
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
@@ -108,16 +106,54 @@ fun EditProfileScreen(profile: ProfileData, onSaveChanges: (firstName: String, l
             ) {
                 Text("Save", color = Color.White, fontSize = 16.sp)
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            DeleteAccountButton(onDelete)
         }
-
-        // Spacer(modifier = Modifier.weight(1f))
-
-        // NavBar()
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun EditProfilePreview() {
-//    EditProfileScreen()
-//}
+@Composable
+fun DeleteAccountButton(onDelete: () -> Unit) {
+    var showDialog by remember { mutableStateOf(false) }
+
+    // Botão que abre o modal
+    Button(
+        onClick = { showDialog = true },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.Red
+        )
+    ) {
+        Text("Excluir Conta", color = Color.White, fontSize = 16.sp)
+    }
+
+    // Modal de confirmação
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(text = "Tem certeza?") },
+            text = { Text("Essa ação irá excluir permanentemente sua conta. Deseja continuar?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDialog = false
+                        onDelete()  // Chama a função de exclusão real
+                    }
+                ) {
+                    Text("Sim", color = Color.Red)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showDialog = false }
+                ) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
+}
