@@ -12,9 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BankingApp">
         <activity
-            android:name=".MainActivity"
+            android:name=".BankingAppActivity"
             android:exported="true"
-            android:label="@string/title_activity_main"
+            android:label="BankingAppActivity"
             android:theme="@style/Theme.BankingApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

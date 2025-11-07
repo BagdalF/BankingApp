@@ -1,95 +1,235 @@
 package com.example.bankingapp
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.bankingapp.components.Header
-import com.example.bankingapp.components.NavBar
-import com.example.bankingapp.ui.theme.BankingAppTheme
+import com.example.bankingapp.controllers.PreferencesHelper
+import com.example.bankingapp.controllers.ProfileData
+import com.example.bankingapp.lists.populateWithGenericProfiles
+import com.example.bankingapp.lists.populateWithGenericTransactions
+import com.example.bankingapp.lists.profileList
 
-class MainActivity : ComponentActivity() {
+class BankingAppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            var selectedScreen by remember { mutableIntStateOf(0) }
+            populateWithGenericProfiles()
+            populateWithGenericTransactions()
+            AppNavigation()
+        }
+    }
+}
 
-            BankingAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize(),
-                bottomBar = 
-                    {
-                        NavBar(
-                            selectedItem = selectedScreen,
-                            onItemSelected = { selectedScreen = it }
-                        )
+data class Route( val name: String, val route: String, val icon: ImageVector )
+
+@Composable
+fun AppNavigation() {
+    val navController = rememberNavController()
+    val context = LocalContext.current
+    val prefs = remember { PreferencesHelper(context) }
+    val currentUser = prefs.user
+
+    var selectedItem by remember { mutableIntStateOf(0) }
+    var lastSelectedItem by remember { mutableIntStateOf(0) }
+    val routes = listOf(
+        Route("Profile", "profile/${'$'}{user.id}", Icons.Filled.Person),
+        Route("Bank Statement", "statement/${'$'}{user.id}", Icons.Filled.Settings),
+        Route("Transaction", "transaction/${'$'}{user.id}", Icons.Filled.Info)
+    )
+
+    NavHost(navController = navController, startDestination = "login") {
+        composable("login") {
+            Header(
+                title = "Login"
+            )
+
+            Scaffold(modifier = Modifier.fillMaxSize()) {
+                innerPadding ->
+
+                Column(modifier = Modifier.padding(innerPadding)) {
+                    LoginScreen {
+                        email, password, errorMessage ->
+                        val user = profileList.find { it.email == email && it.password == password }
+                        if (user != null) {
+                            prefs.user = user
+                            prefs.isLogged = true
+                            Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show()
+                            navController.navigate("profile/${'$'}{user.id}") {
+                                popUpTo("login") { inclusive = true }
+                            }
+                        } else {
+                            errorMessage()
+                        }
                     }
-                ) {
-                    innerPadding ->
-                    Base(
-                        selectedScreen = selectedScreen,
-                        onItemSelected = { selectedScreen = it},
-                        modifier = Modifier.fillMaxSize().padding(innerPadding)
-                    )
                 }
             }
         }
-    }
-}
+        composable("profile/{id}") {
+            backstackEntry ->
+            val param = backstackEntry.arguments?.getString("id") ?: ""
+            if (param.isEmpty() || param.toInt() != currentUser?.id) {  navController.navigate("login") { }
 
-@Composable
-fun Base(selectedScreen: Int, onItemSelected: (Int) -> Unit, modifier: Modifier) {
+            Scaffold(modifier = Modifier.fillMaxSize(),
+                bottomBar =
+                    {
+                        NavigationBar(
+                            containerColor = Color.White,
+                            tonalElevation = 8.dp,
+                            modifier = Modifier.height(100.dp)
+                        ) {
+                            routes.forEachIndexed { index, item ->
+                                NavigationBarItem(
+                                    icon = { Icon(item.icon, contentDescription = null) },
+                                    label = { Text(item.name) },
+                                    selected = selectedItem == index,
+                                    onClick = { navController.navigate(item.route); lastSelectedItem = selectedItem; selectedItem = index; },
+                                    alwaysShowLabel = true,
+                                    colors = NavigationBarItemDefaults.colors(
+                                        selectedIconColor = Color.White,
+                                        selectedTextColor = Color.DarkGray,
+                                        unselectedIconColor = Color.DarkGray,
+                                        unselectedTextColor = Color.DarkGray,
+                                        indicatorColor = Color(0xFF1976D2)
+                                    )
+                                )
+                            }
+                        }
+                    }
+                ) {
+                    innerPadding ->
+                    Column(modifier = Modifier.padding(innerPadding)) {
+                        Header(
+                            title = routes[selectedItem].name,
+                            onIconClick = { navController.popBackStack(); val aux = selectedItem; selectedItem = lastSelectedItem; lastSelectedItem = aux; }
+                        )
 
-    Column(modifier = modifier) {
-        Header(
-            title = when (selectedScreen) {
-                0 -> "Profile"
-                1 -> "Bank Statement"
-                2 -> "Transfer"
-                else -> ""
-            },
-            onIconClick = { onItemSelected(0) }
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        when (selectedScreen) {
-            0 -> EditProfileScreen()
-            1 -> StatementScreen()
-            2 -> TransferScreen()
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun BasePreview() {
-    var selectedScreen by remember { mutableIntStateOf(0) }
-
-    BankingAppTheme {
-        Scaffold(modifier = Modifier.fillMaxSize(),
-            bottomBar =
-                {
-                    NavBar(
-                        selectedItem = selectedScreen,
-                        onItemSelected = { selectedScreen = it }
-                    )
+                        EditProfileScreen(currentUser!!, onSaveChanges = { firstName, lastName, phone, email ->
+                            val updatedProfile = ProfileData(id = currentUser.id, firstName, lastName, phone, email, password = currentUser.password)
+                            val index = profileList.indexOfFirst { it.id == currentUser.id }
+                            if (index != -1) {
+                                profileList[index] = updatedProfile
+                            }
+                            prefs.user = updatedProfile
+                        })
+                    }
                 }
-        ) {
-            innerPadding ->
-            Base(
-                selectedScreen = selectedScreen,
-                onItemSelected = { selectedScreen = it },
-                modifier = Modifier.fillMaxSize().padding(innerPadding)
-            )
+            }
+        }
+        composable("statement/{id}") {
+            backstackEntry ->
+            val param = backstackEntry.arguments?.getString("id") ?: ""
+            if (param.isEmpty() || param.toInt() != currentUser?.id) {  navController.navigate("login") { } }
+
+            Scaffold( modifier = Modifier.fillMaxSize(),
+                bottomBar =
+                    {
+                        NavigationBar(
+                            containerColor = Color.White,
+                            tonalElevation = 8.dp,
+                            modifier = Modifier.height(100.dp)
+                        ) {
+                            routes.forEachIndexed { index, item ->
+                                NavigationBarItem(
+                                    icon = { Icon(item.icon, contentDescription = null) },
+                                    label = { Text(item.name) },
+                                    selected = selectedItem == index,
+                                    onClick = { navController.navigate(item.route); lastSelectedItem = selectedItem; selectedItem = index; },
+                                    alwaysShowLabel = true,
+                                    colors = NavigationBarItemDefaults.colors(
+                                        selectedIconColor = Color.White,
+                                        selectedTextColor = Color.DarkGray,
+                                        unselectedIconColor = Color.DarkGray,
+                                        unselectedTextColor = Color.DarkGray,
+                                        indicatorColor = Color(0xFF1976D2)
+                                    )
+                                )
+                            }
+                        }
+                    }
+            ) { innerPadding ->
+                Column(modifier = Modifier.padding(innerPadding)) {
+                    Header(
+                        title = routes[selectedItem].name,
+                        onIconClick = { navController.popBackStack(); val aux = selectedItem; selectedItem = lastSelectedItem; lastSelectedItem = aux; }
+                    )
+
+                    StatementScreen(currentUser)
+                }
+            }
+        }
+        composable("transaction/{id}") {
+            backstackEntry ->
+            val param = backstackEntry.arguments?.getString("id") ?: ""
+            if (param.isEmpty() || param.toInt() != currentUser?.id) {  navController.navigate("login") { }
+
+            Scaffold(modifier = Modifier.fillMaxSize(),
+                bottomBar =
+                    {
+                        NavigationBar(
+                            containerColor = Color.White,
+                            tonalElevation = 8.dp,
+                            modifier = Modifier.height(100.dp)
+                        ) {
+                            routes.forEachIndexed { index, item ->
+                                NavigationBarItem(
+                                    icon = { Icon(item.icon, contentDescription = null) },
+                                    label = { Text(item.name) },
+                                    selected = selectedItem == index,
+                                    onClick = { navController.navigate(item.route); lastSelectedItem = selectedItem; selectedItem = index; },
+                                    alwaysShowLabel = true,
+                                    colors = NavigationBarItemDefaults.colors(
+                                        selectedIconColor = Color.White,
+                                        selectedTextColor = Color.DarkGray,
+                                        unselectedIconColor = Color.DarkGray,
+                                        unselectedTextColor = Color.DarkGray,
+                                        indicatorColor = Color(0xFF1976D2)
+                                    )
+                                )
+                            }
+                        }
+                    }
+                ) { innerPadding ->
+                    Column(modifier = Modifier.padding(innerPadding)) {
+                        Header(
+                            title = routes[selectedItem].name,
+                            onIconClick = { navController.popBackStack(); val aux = selectedItem; selectedItem = lastSelectedItem; lastSelectedItem = aux; }
+                        )
+
+                        TransactionScreen(currentUser)
+                    }
+                }
+            }
         }
     }
 }

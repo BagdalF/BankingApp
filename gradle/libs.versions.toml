@@ -12,14 +12,19 @@ activityCompose = "1.10.1"
 constraintlayout = "2.1.4"
 lifecycleLivedataKtx = "2.9.1"
 lifecycleViewmodelKtx = "2.9.1"
+materialVersion = "1.9.1"
+navigationCompose = "2.9.3"
 navigationFragmentKtx = "2.6.0"
 navigationUiKtx = "2.6.0"
 lifecycleRuntimeKtx = "2.9.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+
+androidx-material = { module = "androidx.compose.material:material", version.ref = "materialVersion" }
 androidx-material3 = { module = "androidx.composevh.material3:material3" }
 androidx-foundation = { module = "androidx.compose.foundation:foundation" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-ui = { module = "androidx.compose.ui:ui" }
 androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
